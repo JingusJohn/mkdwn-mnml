@@ -2,7 +2,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { liveQuery } from "dexie";
-  import { db } from "$lib/db";
+  import { db, type Subject } from "$lib/db";
 
   let subjectSearchString: string = "";
   let newSubjectName: string = "";
@@ -47,6 +47,19 @@
       });
     } catch (error) {
 
+    }
+  }
+
+  async function deleteSubject(s: Subject) {
+    try {
+      // validate that subject has id (it always should)
+      if (s.id) {
+        await db.notes.where('subjectId').equals(s.id).delete();
+        await db.tasks.where('subjectId').equals(s.id).delete();
+        await db.subjects.where('id').equals(s.id).delete();
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -106,13 +119,13 @@
     <p>{$subjects.filter(s => s.title.includes(subjectSearchString)).length} results</p>
     <div class="grid grid-cols-1 gap-2 md:gap-4 md:grid-cols-2 xl:grid-cols-3 py-4">
       {#each $subjects.filter(s => s.title.includes(subjectSearchString)) as s}
-        <div class="card w-96 bg-secondary hover:bg-primary text-secondary-content hover:text-primary-content">
+        <div class="card w-96 bg-secondary hover:bg-primary transition-colors duration-300 text-secondary-content hover:text-primary-content">
           <div class="card-body">
             <h2 class="card-title">{s.title}</h2>
             <p>{s.dateCreated.toDateString()}</p>
             <div class="card-actions justify-end">
-              <a href="/subjects/{s.id}" class="btn hover:btn-primary">View</a>
-              <button class="btn hover:btn-warning">Remove</button>
+              <a href="/subjects/{s.id}" class="btn hover:btn-primary transition-colors duration-300">View</a>
+              <button on:click={() => deleteSubject(s)} class="btn hover:btn-warning">Remove</button>
             </div>
           </div>
         </div>
