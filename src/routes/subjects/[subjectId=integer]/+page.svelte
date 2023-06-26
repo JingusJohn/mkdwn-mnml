@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { marked } from 'marked';
 	import { db } from '$lib/db.js';
 	import { liveQuery } from 'dexie';
+	import { page } from '$app/stores';
 
   export let data;
   
@@ -24,12 +26,18 @@
 <div class="flex flex-row w-full min-h-screen justify-between py-4">
 
   <!-- NOTES -->
-  <div class="w-full px-2">
+  <div class="w-full px-2 flex flex-col items-center">
     <h1 class="text-center text-2xl">NOTES</h1>
+    <a href={"/notes/create" + ($page ? `?redirectTo=${$page.url}` : "")} class="btn btn-accent w-full">NEW</a>
     {#if $notes}
       {#each $notes as note}
         <div>
-          <h2>{note.title}</h2>
+          <div class="flex flex-row justify-between">
+            <h2>{note.title}</h2>
+            <p>updated: {note.dateUpdated.toDateString()}</p>
+            <article>{@html marked.parse(note.content)}</article>
+          </div>
+          <div class="divider"></div> 
         </div>
       {/each}
     {:else}

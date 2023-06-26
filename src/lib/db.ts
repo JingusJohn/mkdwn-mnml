@@ -11,8 +11,8 @@ export interface Note {
   subjectId: number;
   title: string;
   content: string; // markdown
-  dateCreated: string;
-  dateUpdated: string;
+  dateCreated: Date;
+  dateUpdated: Date;
 }
 
 export interface Task {
@@ -45,7 +45,7 @@ export class DexieDB extends Dexie {
 
   constructor() {
     super('myDatabase');
-    this.version(2).stores({
+    this.version(3).stores({
       subjects: '++id, title, dateCreated', // Primary key and indexed props
       notes: '++id, subjectId, title, content, dateCreated, dateUpdated',
       tasks: '++id, subjectId, title, description, completed, dateCompleted, dateCreated, dateUpdated',

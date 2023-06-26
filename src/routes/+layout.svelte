@@ -63,7 +63,7 @@
 
 <div class="flex flex-row justify-between px-8 py-2 items-center">
   <div class="flex flex-row">
-    <h1 class="text-4xl font-bold">MKDWN MNML</h1>
+    <a href="/" class="text-4xl font-bold">MKDWN MNML</a>
     <p>v 1.0.0</p>
   </div>
   <div class="indicator">
