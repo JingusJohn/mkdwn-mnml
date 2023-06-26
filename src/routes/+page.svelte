@@ -68,8 +68,6 @@
 
 </script>
 
-<!-- Open the modal using ID.showModal() method -->
-<button class="btn" on:click={showCreationModal}>open modal</button>
 <dialog id="creation-modal" class="modal">
   <form method="dialog" class="modal-box flex flex-col space-y-4">
     <h3 class="font-bold text-lg">New Subject</h3>
@@ -83,7 +81,7 @@
   </form>
 </dialog>
 
-<div class="w-full flex flex-col items-center">
+<div class="w-full flex flex-col items-center min-h-screen">
   <!-- If a user has no subjects, prompt them to create one -->
 
   <div class="flex flex-row items-center space-x-4">
@@ -106,10 +104,22 @@
   {#if $subjects}
 
     <p>{$subjects.filter(s => s.title.includes(subjectSearchString)).length} results</p>
-
-    {#each $subjects.filter(s => s.title.includes(subjectSearchString)) as s}
-      <h1 class="text-2xl">{s.title}</h1>
-    {/each}
+    <div class="grid grid-cols-1 gap-2 md:gap-4 md:grid-cols-2 xl:grid-cols-3 py-4">
+      {#each $subjects.filter(s => s.title.includes(subjectSearchString)) as s}
+        <div class="card w-96 bg-secondary hover:bg-primary text-secondary-content hover:text-primary-content">
+          <div class="card-body">
+            <h2 class="card-title">{s.title}</h2>
+            <p>{s.dateCreated.toDateString()}</p>
+            <div class="card-actions justify-end">
+              <a href="/subjects/{s.id}" class="btn hover:btn-primary">View</a>
+              <button class="btn hover:btn-warning">Remove</button>
+            </div>
+          </div>
+        </div>
+      {/each}
+    </div>
+  {:else}
+    <span class="loading loading-ring loading-lg py-16"></span>
   {/if}
 </div>
 

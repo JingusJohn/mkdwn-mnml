@@ -45,7 +45,7 @@ export class DexieDB extends Dexie {
 
   constructor() {
     super('myDatabase');
-    this.version(1).stores({
+    this.version(2).stores({
       subjects: '++id, title, dateCreated', // Primary key and indexed props
       notes: '++id, subjectId, title, content, dateCreated, dateUpdated',
       tasks: '++id, subjectId, title, description, completed, dateCompleted, dateCreated, dateUpdated',

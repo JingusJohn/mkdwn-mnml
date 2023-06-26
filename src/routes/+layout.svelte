@@ -63,7 +63,7 @@
 
 <div class="flex flex-row justify-between px-8 py-2 items-center">
   <div class="flex flex-row">
-    <h1 class="text-4xl">MKDWN MNML</h1>
+    <h1 class="text-4xl font-bold">MKDWN MNML</h1>
     <p>v 1.0.0</p>
   </div>
   <div class="indicator">
@@ -78,6 +78,7 @@
   <input id="reminder-drawer" type="checkbox" class="drawer-toggle" />
   <div class="drawer-content">
     <!-- Page content here -->
+    <slot />
   </div> 
   <div class="drawer-side">
     <label for="reminder-drawer" class="drawer-overlay"></label>
@@ -126,12 +127,13 @@
   </div>
 </div>
 <!-- <slot /> -->
-<slot />
 
 <footer class="footer p-10 bg-base-200 text-base-content">
   <div>
-    <p class="text-xl">Jack Branch</p>
+    <p class="text-2xl">Jack Branch</p>
     <p>Software developer. This was just a quick project to learn about the native IndexedDB API in JavaScript.</p>
+    <p>Like the project? Let me know by giving it a star on GitHub!</p>
+    <p>Any issues? Report them on GitHub as well!</p>
     <p>Made with love using SvelteKit, Dexie, and TailwindCSS + DaisyUI.</p>
   </div>
   <div>
