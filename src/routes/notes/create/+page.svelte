@@ -2,10 +2,14 @@
 	import { page } from "$app/stores";
 	import { marked } from "marked";
   import { highlight, getLanguage } from 'highlightjs';
+	import { db } from "$lib/db.js";
+	import { goto } from "$app/navigation";
 
   export let data;
 
-  let { redirectTo } = data;
+  let { redirectTo, subjectId } = data;
+  $: console.log(data)
+  $: console.log("subject: ", subjectId);
 
   let newNoteTitle: string = "";
   let newNoteContent: string = "";
@@ -17,12 +21,37 @@
     renderer: new marked.Renderer(),
     highlight: function(code, lang) {
       const language = getLanguage(lang) ? lang : 'plaintext';
-      console.log(language);
-      console.log(code);
       return highlight(language, code).value
     },
     langPrefix: 'hljs language-'
   });
+
+  async function createNote() {
+    try {
+      if (subjectId) {
+        const id = await db.notes.add({
+          title: newNoteTitle,
+          subjectId: Number(subjectId),
+          content: newNoteContent,
+          dateCreated: new Date(Date.now()),
+          dateUpdated: new Date(Date.now())
+        });
+        console.log(id)
+
+        // on success, return them to the subject view
+        if (redirectTo) {
+          goto(redirectTo, {replaceState: true});
+        } else {
+          goto('/', {replaceState: true});
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  $: createDisabled = newNoteTitle === "";
+  $: preview = newNoteContent != null ? marked.parse(newNoteContent!) : "";
 
 </script>
 
@@ -32,7 +61,7 @@
   <label for="note-title">Title</label>
   <div class="join">
     <input name="note-title" bind:value={newNoteTitle} type="text" placeholder="Astronomy lecture #1 (the sun)" class="w-full join-item input input-bordered input-primary" />
-    <button class="join-item btn btn-primary">Create</button>
+    <button disabled={createDisabled} on:click={createNote} class="join-item btn btn-primary">Create</button>
     <a href={redirectTo ? redirectTo : "/"} class="join-item btn hover:btn-warning">Cancel</a>
   </div>
 
@@ -49,7 +78,7 @@
       <p>No note content!</p>
     {:else}
       <article class="prose dark:prose-invert font-sans text-white max-w-none pt-2 sm:px-8">
-        {@html marked.parse(newNoteContent)}
+        {@html preview}
       </article>
     {/if}
   {/if}

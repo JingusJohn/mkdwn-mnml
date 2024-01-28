@@ -1,26 +1,42 @@
 <script lang="ts">
   import { marked } from 'marked';
-	import { db } from '$lib/db.js';
-	import { liveQuery } from 'dexie';
+	import { db, type Note } from '$lib/db.js';
+	import { liveQuery, type Observable } from 'dexie';
 	import { page } from '$app/stores';
 
   export let data;
   
   const { subjectId } = data;
+  $: console.log(subjectId)
+  const newNoteUrl = `/notes/create?subjectId=${subjectId}${$page ? `&redirectTo=${$page.url}` : ''}`;
 
   // create liveQueries for notes and tasks
-  let notes = liveQuery(
-    () => db.notes
+  let notes: Observable<Note[]>;
+
+  $: if (subjectId) {
+    console.log(subjectId, " is defined!")
+    notes = liveQuery(
+      () => db.notes
       .where('subjectId')
       .equals(subjectId)
       .toArray()
-  );
+    )
+  }
+
+  // let notes = liveQuery(
+  //   () => db.notes
+  //     .where('subjectId')
+  //     .equals(1)
+  //     .toArray()
+  // );
+  $: console.log($notes)
   let tasks = liveQuery(
     () => db.tasks
       .where('subjectId')
       .equals(subjectId)
       .toArray()
   );
+
 </script>
 
 <div class="flex flex-row w-full min-h-screen justify-between py-4">
@@ -28,7 +44,7 @@
   <!-- NOTES -->
   <div class="w-full px-2 flex flex-col items-center">
     <h1 class="text-center text-2xl">NOTES</h1>
-    <a href={"/notes/create" + ($page ? `?redirectTo=${$page.url}` : "")} class="btn btn-accent w-full">NEW</a>
+    <a href={newNoteUrl} class="btn btn-accent w-full">NEW</a>
     {#if $notes}
       {#each $notes as note}
         <div>
